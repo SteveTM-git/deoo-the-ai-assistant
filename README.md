@@ -129,3 +129,92 @@ body { font-family: Arial, sans-serif; margin:0; }
     }
 }
 
+
+
+lab 6:
+
+✅ Prerequisites
+You must have:
+Docker / Docker Desktop
+kubectl
+Minikube
+Terminal (macOS/Linux) or PowerShell (Windows)
+Verify installations:
+docker --version
+kubectl version --client
+minikube version
+🟩 STEP 0 — Start Kubernetes Cluster
+Start Minikube:
+minikube start --driver=docker
+Check status:
+minikube status
+kubectl get nodes
+Node must be Ready.
+🟦 STEP 1 — Create Your First Pod
+1️⃣ Create a YAML file: nginx-pod.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-pod
+  labels:
+    app: nginx
+spec:
+  containers:
+    - name: nginx
+      image: nginx:latest
+      ports:
+        - containerPort: 80
+2️⃣ Apply the YAML
+kubectl apply -f nginx-pod.yaml
+3️⃣ Check Pod Status
+kubectl get pods
+Expected:
+nginx-pod   1/1   Running
+4️⃣ Describe Pod
+kubectl describe pod nginx-pod
+5️⃣ Access the Pod (Port Forward)
+kubectl port-forward pod/nginx-pod 8080:80
+Open:
+👉 http://localhost:8080
+6️⃣ Delete Pod
+kubectl delete pod nginx-pod
+🟨 STEP 2 — Create Deployment & Scale It
+1️⃣ Create deployment using kubectl:
+kubectl create deployment my-nginx --image=nginx
+Check deployments:
+kubectl get deployments
+Check pods:
+kubectl get pods -l app=my-nginx
+2️⃣ Scale deployment
+kubectl scale deployment my-nginx --replicas=3
+Verify:
+kubectl get pods
+You should see 3 pods.
+3️⃣ Rolling update
+kubectl set image deployment/my-nginx nginx=nginx:1.25
+kubectl rollout status deployment/my-nginx
+4️⃣ Rollback if needed
+kubectl rollout undo deployment/my-nginx
+🟥 STEP 3 — Expose Deployment as a Service
+Create NodePort service:
+kubectl expose deployment my-nginx --type=NodePort --port=80
+See services:
+kubectl get svc
+Get auto-generated URL:
+minikube service my-nginx --url
+Open the printed URL in the browser.
+Delete service:
+kubectl delete svc my-nginx
+🧹 STEP 4 — Clean Up
+Delete deployment:
+kubectl delete deployment my-nginx
+Delete all services:
+kubectl delete svc --all
+Delete all resources (safe):
+kubectl delete all --all -n default
+Stop Minikube:
+minikube stop
+Delete Minikube:
+minikube delete
+
+
